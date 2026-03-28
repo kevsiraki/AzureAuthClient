@@ -1,0 +1,128 @@
+﻿@page "/user"
+
+@attribute [Authorize]
+
+@using AuthClient.Services
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.Identity.Web
+
+@inject ApiService Api
+@inject NavigationManager Nav
+
+<div class="user-container">
+    <div class="user-card">
+
+        <h2 class="title">Your Profile</h2>
+
+        <AuthorizeView>
+            <Authorized>
+                @if (!loaded)
+                {
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>Loading your info...</p>
+                    </div>
+                }
+                else if (user is null)
+                {
+                    <div class="error">
+                        <p>⚠️ Failed to load user info</p>
+                    </div>
+                }
+                else
+                {
+                    <div class="profile">
+                        <div class="avatar">
+                            @user.Name?.Substring(0, 1)
+                        </div>
+
+                        <div class="info">
+                            <div class="name">@user.Name</div>
+                            <div class="email">@user.Email</div>
+                        </div>
+                    </div>
+
+                    <!-- Role-based UI -->
+                    @if (IsAdmin)
+                    {
+                        <div class="admin-panel">
+                            🔐 Admin features enabled
+                        </div>
+                    }
+
+                    @if (IsGmailUser)
+                    {
+                        <div class="public-user">
+                            🌐 Gmail user (limited access)
+                        </div>
+                    }
+
+                    @if (!IsAdmin && !IsGmailUser)
+                    {
+                        <div class="default-user">
+                            👤 Standard user
+                        </div>
+                    }
+                }
+            </Authorized>
+
+            <NotAuthorized>
+                <div class="not-auth">
+                    <p>Please log in to view your profile.</p>
+                </div>
+            </NotAuthorized>
+        </AuthorizeView>
+
+    </div>
+
+</div>
+
+@code {
+    private UserInfo? user;
+    private bool loaded = false;
+
+private bool IsGmailUser = false;
+    private bool IsAdmin = false;
+
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthStateTask { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var authState = await AuthStateTask!;
+            var userPrincipal = authState.User;
+
+            if (userPrincipal.Identity?.IsAuthenticated == true)
+            {
+                // Read roles from claims
+                user = await Api.GetUserAsync();
+
+                if (user is not null)
+                {
+                    IsGmailUser = user.Role == "GmailUser";
+                    IsAdmin = user.Role == "Admin";
+                }
+
+                // Load user data from API
+                user = await Api.GetUserAsync();
+            }
+        }
+        catch (MicrosoftIdentityWebChallengeUserException)
+        {
+            Nav.NavigateTo("MicrosoftIdentity/Account/SignIn", true);
+            return;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"ERROR: {ex.Message}");
+        }
+        finally
+        {
+            loaded = true;
+        }
+    }
+
+}

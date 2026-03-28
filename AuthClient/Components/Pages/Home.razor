@@ -1,0 +1,51 @@
+﻿@page "/"
+@using Microsoft.AspNetCore.Components.Authorization
+@inject NavigationManager Nav
+@rendermode InteractiveServer
+
+<div class="auth-container">
+    <div class="auth-card">
+
+        <h1 class="app-title">Welcome</h1>
+
+        <AuthorizeView>
+            <Authorized>
+                <div class="user-section">
+                    <div class="user-greeting">
+                        👋 Hello, <strong>@context.User.Identity?.Name</strong>
+                    </div>
+
+                    <button class="btn logout-btn" @onclick="Logout">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                        Logout
+                    </button>
+                </div>
+            </Authorized>
+
+            <NotAuthorized>
+                <div class="login-section">
+                    <p class="subtitle">Sign in to continue</p>
+                    <button class="btn ms-login-btn" @onclick="Login">
+                        <span class="ms-logo">
+                            <span></span><span></span><span></span><span></span>
+                        </span>
+                        Sign in with Microsoft
+                    </button>
+                </div>
+            </NotAuthorized>
+        </AuthorizeView>
+
+    </div>
+</div>
+
+@code {
+    void Login()
+    {
+        Nav.NavigateTo("MicrosoftIdentity/Account/SignIn", forceLoad: true);
+    }
+
+    void Logout()
+    {
+        Nav.NavigateTo("MicrosoftIdentity/Account/SignOut", true);
+    }
+}
