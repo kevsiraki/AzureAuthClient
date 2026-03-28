@@ -6,6 +6,7 @@
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.Identity.Web
+@using AuthClient.Models
 
 @inject ApiService Api
 @inject NavigationManager Nav
@@ -81,8 +82,7 @@
 @code {
     private UserInfo? user;
     private bool loaded = false;
-
-private bool IsGmailUser = false;
+    private bool IsGmailUser = false;
     private bool IsAdmin = false;
 
     [CascadingParameter]
@@ -124,5 +124,4 @@ private bool IsGmailUser = false;
             loaded = true;
         }
     }
-
 }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Identity.Web;
 using System.Net.Http.Headers;
+using AuthClient.Models;
 using Microsoft.Extensions.Configuration;
 
 namespace AuthClient.Services;
@@ -48,12 +49,4 @@ public class ApiService
             return null;
         }
     }
-}
-
-public class UserInfo
-{
-    public string? Email { get; set; }
-    public string? Name { get; set; }
-
-    public string? Role { get; set; }
 }
