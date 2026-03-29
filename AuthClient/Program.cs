@@ -1,12 +1,12 @@
 using AuthClient.Components;
 using AuthClient.Services;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
 
 var builder = WebApplication.CreateBuilder(args);
-
 
 // Services
 
@@ -30,7 +30,7 @@ builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
             OnRedirectToIdentityProviderForSignOut = context =>
             {
                 context.ProtocolMessage.PostLogoutRedirectUri =
-                    "https://auth.kevinsiraki.com/signout-callback-oidc";
+                    "https://auth.kevinsiraki.com/logged-out";
 
                 return Task.CompletedTask;
             }
@@ -99,10 +99,9 @@ app.UseAntiforgery();
 // Controllers (required for Microsoft Identity endpoints)
 app.MapControllers();
 
-app.MapGet("/signout-callback-oidc", context =>
+app.MapGet("/logged-out", async context =>
 {
     context.Response.Redirect("/");
-    return Task.CompletedTask;
 });
 
 // Razor components (Blazor Server)

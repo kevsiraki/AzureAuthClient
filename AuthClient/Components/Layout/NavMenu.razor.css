@@ -103,3 +103,27 @@
         overflow-y: auto;
     }
 }
+
+.ms-logo {
+    display: grid;
+    grid-template-columns: repeat(2, 8px);
+    grid-template-rows: repeat(2, 8px);
+    gap: 2px;
+    margin-right: 10px;
+}
+
+.ms-logo span:nth-child(1) {
+    background: #f25022;
+}
+
+.ms-logo span:nth-child(2) {
+    background: #7fba00;
+}
+
+.ms-logo span:nth-child(3) {
+    background: #00a4ef;
+}
+
+.ms-logo span:nth-child(4) {
+    background: #ffb900;
+}
